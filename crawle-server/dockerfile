@@ -1,0 +1,31 @@
+FROM node:12.18.0
+
+ENV DOCKERIZE_VERSION v0.6.1
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+RUN npm install -g nodemon
+RUN mkdir -p /usr/src/app2
+
+WORKDIR /usr/src/app2
+
+COPY . .
+RUN npm install yarn
+RUN yarn install
+
+RUN apt-get -y update
+RUN apt-get install -y google-chrome-stable
+
+RUN apt-get install -yqq unzip curl
+RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
+RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+
+RUN yarn add selenium
+
+RUN chmod +x docker-entrypoint.sh  
+ENTRYPOINT ./docker-entrypoint.sh
+
+# RUN tar -xvf ./T.tar -C ./public/images
+
+EXPOSE 8070
