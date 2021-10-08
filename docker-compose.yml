@@ -1,6 +1,7 @@
 version: '3.5'
 services:
   cinema_server:
+    image: ny030303/docker-networker_cinema_server
     build: 
       context: ./cinema-server
     restart: always
@@ -14,6 +15,7 @@ services:
       - db
 
   crawle_server:
+    image: ny030303/docker-networker_crawle_server
     build: 
       context: ./crawle-server
     restart: always
