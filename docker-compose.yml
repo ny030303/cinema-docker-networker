@@ -1,29 +1,31 @@
 version: '3.5'
 services:
-  main_server:
+  cinema_server:
     build: 
       context: ./cinema-server
     restart: always
     volumes:
-      - ./cinema-server/public:/images/uploads
+      - ./cinema-server:/usr/src/app
     ports:
       - 8080:54000
     networks:
       - db-net
     depends_on:
       - db
-      
+
   crawle_server:
     build: 
       context: ./crawle-server
     restart: always
+    volumes:
+      - ./crawle-server:/usr/src/app
     ports:
       - 8070:53000
     networks:
       - db-net
     depends_on:
       - db
-
+      
   db:
     image: mysql:8.0.20
     command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -37,8 +39,7 @@ services:
       - db-net
     ports:
       - 8086:3306
-volumes:
-  movie-poster:
+  
 networks:
   db-net:
       

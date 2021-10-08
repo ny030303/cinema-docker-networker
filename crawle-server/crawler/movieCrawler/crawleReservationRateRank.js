@@ -1,15 +1,13 @@
 const {Builder, By, Key, until, Capabilities} = require('selenium-webdriver');
 const { downloadImageToUrl } = require('../imgDownload');
 const {init:dbInit,dbQuery} = require("../../controllers/dbController");
+const {loadChromeDriver} = require("../../CommenUtil");
 // ()();
 
 exports.crawleReservationRate = async function () {
-    const chrome = require('selenium-webdriver/chrome');
-    const chromedriver = require('chromedriver');
-
-    chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
-    let driver = new Builder().withCapabilities(Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
-    try {
+    
+  const driver = await loadChromeDriver();
+  try {
         // let driver = await new Builder().forBrowser('chrome').build();
         
         await dbInit();

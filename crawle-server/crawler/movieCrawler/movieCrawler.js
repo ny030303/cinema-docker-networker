@@ -1,11 +1,12 @@
 const {Builder, By, Key, until, Capabilities} = require('selenium-webdriver');
-const { downloadImageToUrl } = require('../imgDownload');
+const { downloadImageToUrl,downloadImageToUrlInS3 } = require('../imgDownload');
 const {getJsonData, appendDataInJson, appendLinkToTxt} = require('../fileController');
 const {init: dbInit, dbQuery, getTodayMovies} = require("../../controllers/dbController");
 const iconv = require("iconv-lite");
 
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
+const {loadChromeDriver} = require("../../CommenUtil");
 const implicit_wait = {implicit: 5000, pageLoad: 5000};
 
 chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
@@ -43,7 +44,7 @@ const findNumIdxInArrView = async (arrView, num) => {
 }
 
 (async function example() {
-    const driver = loadSelenium();
+  const driver = await loadChromeDriver();
     try {
       await dbInit();
 
@@ -88,7 +89,6 @@ const findNumIdxInArrView = async (arrView, num) => {
             }
           }
         }
-        await driver.sleep(500);
       } catch (error) {
         console.log(error);
       } finally {
@@ -166,7 +166,7 @@ const pushMovieQuery = async (mJson) => {
         let queryRes = await dbQuery("UPDATE", sql, params);
         if(!queryRes.error) {
           if(urlArr[urlArr.length-1] != "searchMovieList.do#" && imgUrl == mJson.poster_img) {
-              downloadImageToUrl(href, mJson.poster_img);
+            downloadImageToUrlInS3(href, mJson.poster_img);
           }
         }
         console.log(" updated => " + mJson.movie_id);
@@ -181,7 +181,7 @@ const pushMovieQuery = async (mJson) => {
       // console.log(queryRes);
       if(!queryRes.error) {
         if(urlArr[urlArr.length-1] != "searchMovieList.do#") {
-            downloadImageToUrl(href, mJson.poster_img);
+          downloadImageToUrlInS3(href, mJson.poster_img);
         }
       }
     }
@@ -193,7 +193,7 @@ const pushMovieQuery = async (mJson) => {
 }
 
 const movieInfoByWebDriver = async (nowNum, i) => {
-    const driver = loadSelenium();
+  const driver = await loadChromeDriver();
     // console.log(nowNum);
     try {
         await driver.get('https://www.kobis.or.kr/kobis/business/mast/mvie/searchMovieList.do');

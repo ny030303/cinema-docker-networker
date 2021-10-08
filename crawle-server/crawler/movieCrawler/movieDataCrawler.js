@@ -1,14 +1,10 @@
+const {loadChromeDriver} = require("../../CommenUtil");
 const {Builder, By, Key, until, Capabilities} = require('selenium-webdriver');
 const { getJsonData, appendDataInJson, appendLinkToTxt } = require('./fileController');
 const { downloadImageToUrl } = require('./imgDownload');
 const {dbQuery} = require("../../../controllers/dbController");
 (async function init() {
-    const chrome = require('selenium-webdriver/chrome');
-    const chromedriver = require('chromedriver');
-
-    chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
-    var driver = new Builder().withCapabilities(Capabilities.chrome()).build();
-
+    const driver = await loadChromeDriver();
     try {
         await dbInit();
         let movieData = await getJsonData("movie/movieGraph.json");

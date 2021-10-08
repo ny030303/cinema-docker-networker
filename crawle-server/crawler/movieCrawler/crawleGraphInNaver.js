@@ -5,7 +5,7 @@ const iconv = require("iconv-lite");
 
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
-const { getNowDateToYYMMDD } = require('../../CommenUtil');
+const { getNowDateToYYMMDD, loadChromeDriver } = require('../../CommenUtil');
 
 const implicit_wait = {implicit: 5000, pageLoad: 5000};
 
@@ -22,17 +22,8 @@ async function changeNaverMovieSearch(driver, title) {
   await driver.sleep(1000);
 }
 
-const loadSelenium = () => {
-  let options = new chrome.Options();
-  // options.headless();
-  options.addArguments('--headless --disable-gpu');     // GPU 사용 안함
-  options.addArguments('lang=ko_KR');      //  언어 설정
-  // return new Builder().withCapabilities(Capabilities.chrome()).setChromeOptions(options).build();
-  return new Builder().withCapabilities(Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
-}
-
 const movieInfoByWebDriver = async (movie) => {
-  const driver = loadSelenium();
+  const driver = await loadChromeDriver('lang=ko_KR');
   try {
     console.log(movie.title);
     await changeNaverMovieSearch(driver, movie.title);
@@ -76,13 +67,17 @@ exports.crawleGraph2 = async () => {
 
 exports.crawleGraph = async function crawleGraph() {
   try {
-    const chrome = require('selenium-webdriver/chrome');
-    const chromedriver = require('chromedriver');
 
-    chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
-    // var driver = new Builder().withCapabilities(Capabilities.chrome()).build();
+    var driver = await loadChromeDriver('lang=ko_KR');
+    // const chrome = require('selenium-webdriver/chrome');
+    // const chromedriver = require('chromedriver');
 
-    var driver = new Builder().withCapabilities(Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
+    // chrome.setDefaultService(new chrome.ServiceBuilder(chromedriver.path).build());
+    // // var driver = new Builder().withCapabilities(Capabilities.chrome()).build();
+
+    // var driver = new Builder().withCapabilities(Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
+   
+   
     // SELECT * FROM `movie` where release_date NOT LIKE '____-__-__' <<=  release_date를 알 수 없는 정보 (나중에 처리 필요)
     
     let queryRes = await getTodayMovies();

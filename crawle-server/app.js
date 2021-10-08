@@ -1,9 +1,17 @@
 // require
 const express = require('express');
 const app = express();
-
+var {formDataUpload} = require('./CommenUtil');
 var {init} = require('./controllers/dbController');
 init();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/upload', formDataUpload.single("img"), function (req, file, next) {
+  console.log("file");
+  console.log(file);
+});
 
 Array.prototype.division = function (n) {
   let arr = this;
