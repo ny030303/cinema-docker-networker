@@ -1,0 +1,9 @@
+[submodule "crawle-server"]
+	path = crawle-server
+	url = https://github.com/ny030303/crawle-server.git
+[submodule "cinema-server"]
+	path = cinema-server
+	url = https://github.com/ny030303/cinema_server.git
+[submodule "cinema_server"]
+	path = cinema_server
+	url = https://github.com/ny030303/cinema_server.git
